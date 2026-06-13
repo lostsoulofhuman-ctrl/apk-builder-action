@@ -17,11 +17,11 @@ on:
         required: false
         default: ""
       jdkVersion:
-        description: "OpenJDK version: 8, 17, 21, 25, ..."
+        description: "OpenJDK version"
         required: false
         default: "17"
       taskName:
-        description: "build.gradle task name: assembleDebug, assembleRelease, etc."
+        description: "build.gradle task name"
         required: false
         default: "assembleRelease"
 
@@ -29,11 +29,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup JDK
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
-          java-version: ${{ github.event.inputs.jdkVersion }}
+          java-version: "17"
 
       - name: Clone project
         run: |
@@ -46,7 +46,7 @@ jobs:
       - name: Build APK
         working-directory: ./${{ github.event.inputs.subdir }}
         run: |
-          gradle wrapper --gradle-version 8.5
+          gradle wrapper --gradle-version 8.0
           chmod +x gradlew
 
           if [[ "${{ github.event.inputs.taskName }}" == *Release* ]]; then
