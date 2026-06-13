@@ -46,8 +46,9 @@ jobs:
       - name: Build APK
         working-directory: ./workspace/${{ github.event.inputs.subdir }}
         run: |
-          if [ ! -f "gradlew" ]; then gradle wrapper; fi
-          chmod +x gradlew
+                  gradle wrapper
+                  chmod +x gradlew
+
 
           if [[ "${{ github.event.inputs.taskName }}" == *Release* ]]; then
             echo "Task contains 'Release', attempting to sign a release build with a debug key."
