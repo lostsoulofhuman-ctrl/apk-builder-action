@@ -46,7 +46,7 @@ jobs:
       - name: Build APK
         working-directory: ./${{ github.event.inputs.subdir }}
         run: |
-          gradle wrapper
+          gradle wrapper --gradle-version 8.5
           chmod +x gradlew
 
           if [[ "${{ github.event.inputs.taskName }}" == *Release* ]]; then
@@ -75,4 +75,3 @@ jobs:
           name: apk-archive
           path: ./**/*.apk
           retention-days: 1
-          
