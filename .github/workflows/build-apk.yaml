@@ -7,13 +7,13 @@ on:
       repository:
         description: "Git repository URL"
         required: true
-        default: "https://github.com/android/sunflower"
+        default: "https://github.com/farizanjum/mixer-1"
       branchName:
         description: "Git branch name [Optional]"
         required: false
         default: ""
       subdir:
-        description: "Relative subdirectory path when the project is nested [Optional]"
+        description: "Relative subdirectory path [Optional]"
         required: false
         default: ""
       jdkVersion:
@@ -23,7 +23,7 @@ on:
       taskName:
         description: "build.gradle task name"
         required: false
-        default: "assembleRelease"
+        default: "assembleDebug"
 
 jobs:
   build:
@@ -34,6 +34,11 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
 
       - name: Clone project
         run: |
@@ -46,14 +51,11 @@ jobs:
       - name: Build APK
         working-directory: ./${{ github.event.inputs.subdir }}
         run: |
-          gradle wrapper --gradle-version 8.0
+          gradle wrapper
           chmod +x gradlew
 
           if [[ "${{ github.event.inputs.taskName }}" == *Release* ]]; then
-            echo "Task contains 'Release', attempting to sign a release build..."
-
             if [ ! -f "$HOME/.android/debug.keystore" ]; then
-              echo "Debug keystore not found. Creating one..."
               keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
               mkdir -p $HOME/.android
               mv debug.keystore $HOME/.android/debug.keystore
@@ -75,3 +77,4 @@ jobs:
           name: apk-archive
           path: ./**/*.apk
           retention-days: 1
+          
